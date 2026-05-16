@@ -7,6 +7,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
+replace github.com/kranix-io/kranix-packages => ../kranix-packages
+
 require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
