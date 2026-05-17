@@ -35,4 +35,6 @@ func init() {
 	rootCmd.AddCommand(costCmd)
 	rootCmd.AddCommand(templateCmd)
 	rootCmd.AddCommand(offlineCmd)
+	rootCmd.AddCommand(doctorCmd)
+	rootCmd.AddCommand(portForwardCmd)
 }

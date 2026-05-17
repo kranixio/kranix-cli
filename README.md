@@ -199,6 +199,37 @@ Example:
 kranix context list                  # list saved server contexts
 kranix context use <name>            # switch active context
 kranix context set-default <name>    # set default context
+kranix context profile set <name> <server> [--api-key <key>]  # set or update a profile
+kranix context profile switch <name> # switch to a profile (dev, staging, prod)
+```
+
+### `kranix doctor`
+
+```
+kranix doctor
+
+Flags:
+  --verbose    Show detailed diagnostic information
+  --fix        Attempt to auto-fix issues
+
+Diagnose local setup issues and config problems. Checks config file,
+context configuration, API connectivity, credentials, required tools,
+and directory permissions.
+```
+
+### `kranix port-forward`
+
+```
+kranix port-forward <workload-name> [flags]
+
+Flags:
+  --namespace    Target namespace
+  --local, -l    Local port (default: 8080)
+  --remote, -r   Remote pod port (default: 80)
+  --pod, -p      Specific pod name (auto-selects if not specified)
+
+Shorthand for forwarding a local port to any workload pod. Automatically
+selects a pod and forwards the specified port. Requires kubectl to be installed.
 ```
 
 ### `kranix dashboard`

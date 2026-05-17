@@ -38,6 +38,14 @@ type WorkloadStatus struct {
 	Namespace string `json:"namespace"`
 }
 
+type Pod struct {
+	Name   string `json:"name"`
+	Ready  string `json:"ready"`
+	Status string `json:"status"`
+	Age    string `json:"age"`
+	Node   string `json:"node"`
+}
+
 type LogOptions struct {
 	TailLines int    `json:"tail_lines"`
 	Follow    bool   `json:"follow"`
@@ -476,6 +484,26 @@ func (c *Client) GetTemplate(ctx context.Context, templateName string, vars map[
 	}
 
 	return &content, nil
+}
+
+func (c *Client) ListPods(ctx context.Context, workloadName, namespace string) ([]*Pod, error) {
+	path := fmt.Sprintf("/api/v1/workloads/%s/pods?namespace=%s", workloadName, namespace)
+	resp, err := c.doRequest(ctx, "GET", path, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.parseError(resp)
+	}
+
+	var pods []*Pod
+	if err := json.NewDecoder(resp.Body).Decode(&pods); err != nil {
+		return nil, err
+	}
+
+	return pods, nil
 }
 
 func (c *Client) parseError(resp *http.Response) error {

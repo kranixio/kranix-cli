@@ -107,3 +107,11 @@ func GetCurrentContext(cfg *Config) *Context {
 	}
 	return GetContext(cfg, cfg.CurrentContext)
 }
+
+func GetConfigPath() (string, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(home, configDir, configFile), nil
+}
