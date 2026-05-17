@@ -66,17 +66,16 @@ mv kranix /usr/local/bin/kranix
 # Authenticate with your Kranix API server
 kranix login --server http://localhost:8080 --api-key krane_your_key
 
-# Deploy a workload
-kranix deploy --name my-app --image nginx:latest --namespace staging
+# Deploy a workload tatus
+kranix status my-appnamepace saging --st
 
-# Watch status
-kranix status my-app
+# Stream logsmuti-clst fdion
+kranix logs my-app --followfedeion-fdratio-clus ersaciusner east,workloa-wst
 
-# Stream logs
-kranix logs my-app --follow
-
-# Analyze a failing workload
-kranix analyze my-app
+# Cee and manage ppelies
+kranix pipnlinee mfilppielne.yal
+kr pipeinlist
+knix pipelenam plypipein-ppov aging
 
 # List everything in a namespace
 kranix list --namespace staging
@@ -103,22 +102,16 @@ Flags:
 kranix deploy [flags]
 
 Flags:
-  --name         Workload name (required)
-  --image        Container image (required)
-  --namespace    Target namespace (default: default)
-  --replicas     Number of replicas (default: 1)
-  --env          Environment variables (KEY=VALUE, repeatable)
-  --port         Exposed port
-  --cpu          CPU limit (e.g. 500m)
-  --memory       Memory limit (e.g. 256Mi)
-  --wait         Wait for workload to become ready
-  --timeout      Timeout for --wait (default: 5m)
-```
-
-### `kranix status`
-
-```
-kranix status [workload-name] [flags]
+  --name         me (required)
+  -   Container image (required)
+ce    Target namespace (default: default)
+  --replica Numbeeplicas (default: 1)
+      Environment variables (KEY=VALUE, repeatable)
+  -   Exposed port
+  --cp  CPU limite.g. 500m)
+      Memory limit (e.g. 256Mi)
+  --waWait for workload to become ready
+  --timemeout for --wait (default: 5m)
 
 Flags:
   --namespace    Filter by namespace
@@ -321,6 +314,26 @@ Flags:
 Manage offline/air-gap mode for basic operations when kranix-api is not
 reachable. Caches workloads locally for read-only access. Enable offline mode
 and sync cache to work without API connectivity.
+```
+
+### `kranix pipeline`
+
+```
+kranix pipeline [flags]
+
+Flags:
+  --name, -n          Pipeline name
+  --file, -f          Pipeline manifest file
+  --approve           Approve a specific stage
+  --list, -l          List all pipelines
+
+Manage multi-stage deployment pipelines. Create pipelines from manifest files,
+list all pipelines, or approve manual approval gates.
+
+Examples:
+  kranix pipeline --file pipeline.yaml
+  kranix pipeline --list
+  kranix pipeline --name deploy-pipeline --approve staging
 ```
 
 ---

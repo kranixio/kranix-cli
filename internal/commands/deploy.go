@@ -18,6 +18,12 @@ var deployPort int
 var deployCPU string
 var deployMemory string
 var deployWait bool
+var deployStrategy string
+var deployCanaryReplicas int
+var deployCanaryPercentage int
+var deployCanaryAutoPromote bool
+var deployFederationEnabled bool
+var deployFederationClusters []string
 
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
@@ -83,4 +89,12 @@ func init() {
 	deployCmd.Flags().StringVar(&deployCPU, "cpu", "", "CPU limit (e.g. 500m)")
 	deployCmd.Flags().StringVar(&deployMemory, "memory", "", "Memory limit (e.g. 256Mi)")
 	deployCmd.Flags().BoolVar(&deployWait, "wait", false, "Wait for workload to become ready")
+	// Progressive delivery flags
+	deployCmd.Flags().StringVar(&deployStrategy, "strategy", "rolling", "Deployment strategy: rolling, canary, blue-green")
+	deployCmd.Flags().IntVar(&deployCanaryReplicas, "canary-replicas", 1, "Number of canary replicas")
+	deployCmd.Flags().IntVar(&deployCanaryPercentage, "canary-percentage", 10, "Percentage of traffic to canary (0-100)")
+	deployCmd.Flags().BoolVar(&deployCanaryAutoPromote, "canary-auto-promote", false, "Automatically promote canary on success")
+	// Federation flags
+	deployCmd.Flags().BoolVar(&deployFederationEnabled, "federation", false, "Enable multi-cluster federation")
+	deployCmd.Flags().StringSliceVar(&deployFederationClusters, "federation-clusters", []string{}, "Target clusters for federation")
 }

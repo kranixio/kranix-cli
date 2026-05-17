@@ -37,4 +37,5 @@ func init() {
 	rootCmd.AddCommand(offlineCmd)
 	rootCmd.AddCommand(doctorCmd)
 	rootCmd.AddCommand(portForwardCmd)
+	rootCmd.AddCommand(pipelineCmd)
 }
