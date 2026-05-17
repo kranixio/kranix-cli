@@ -38,4 +38,6 @@ func init() {
 	rootCmd.AddCommand(doctorCmd)
 	rootCmd.AddCommand(portForwardCmd)
 	rootCmd.AddCommand(pipelineCmd)
+	rootCmd.AddCommand(secretCmd)
+	rootCmd.AddCommand(driftCmd)
 }

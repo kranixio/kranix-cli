@@ -24,6 +24,8 @@ var deployCanaryPercentage int
 var deployCanaryAutoPromote bool
 var deployFederationEnabled bool
 var deployFederationClusters []string
+var deployAutoRollback bool
+var deployRollbackThreshold float64
 
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
@@ -95,6 +97,9 @@ func init() {
 	deployCmd.Flags().IntVar(&deployCanaryPercentage, "canary-percentage", 10, "Percentage of traffic to canary (0-100)")
 	deployCmd.Flags().BoolVar(&deployCanaryAutoPromote, "canary-auto-promote", false, "Automatically promote canary on success")
 	// Federation flags
+	// Auto-rollback flags
+	deployCmd.Flags().BoolVar(&deployAutoRollback, "auto-rollback", false, "Enable automatic rollback on failure")
+	deployCmd.Flags().Float64Var(&deployRollbackThreshold, "rollback-threshold", 0.05, "Error rate threshold for auto-rollback (0-1)")
 	deployCmd.Flags().BoolVar(&deployFederationEnabled, "federation", false, "Enable multi-cluster federation")
 	deployCmd.Flags().StringSliceVar(&deployFederationClusters, "federation-clusters", []string{}, "Target clusters for federation")
 }

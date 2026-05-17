@@ -336,6 +336,48 @@ Examples:
   kranix pipeline --name deploy-pipeline --approve staging
 ```
 
+### `kranix secret`
+
+```
+kranix secret [flags]
+
+Flags:
+  --name                 Secret name
+  --type                 Secret source: vault, aws, azure
+  --namespace            Target namespace (default: default)
+  --path                 Secret path in external source
+  --address              External source address
+  --list, -l             List all synced secrets
+
+Manage secret synchronization from external sources like Vault, AWS Secrets Manager,
+and Azure Key Vault to Kubernetes secrets.
+
+Examples:
+  kranix secret --name db-creds --type vault --path secret/data/db --namespace production
+  kranix secret --name api-keys --type aws --namespace production
+  kranix secret --list
+```
+
+### `kranix drift`
+
+```
+kranix drift [flags]
+
+Flags:
+  --app                  Application name
+  --namespace            Target namespace (default: default)
+  --git-repo             Git repository URL
+  --check                Check for drift
+  --reconcile            Reconcile detected drift
+
+Detect and alert when cluster state diverges from Git state. Supports automatic
+reconciliation and notification integrations.
+
+Examples:
+  kranix drift --check --app my-app --namespace production
+  kranix drift --reconcile --app my-app --namespace production
+```
+
 ---
 
 ## Shell completion
