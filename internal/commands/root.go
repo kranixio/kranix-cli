@@ -29,4 +29,7 @@ func init() {
 	rootCmd.AddCommand(manifestsCmd)
 	rootCmd.AddCommand(contextCmd)
 	rootCmd.AddCommand(completionCmd)
+	rootCmd.AddCommand(dashboardCmd)
+	rootCmd.AddCommand(diffCmd)
+	rootCmd.AddCommand(aiCmd)
 }

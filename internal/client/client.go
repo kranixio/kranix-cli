@@ -13,8 +13,8 @@ import (
 )
 
 type Client struct {
-	server    string
-	apiKey    string
+	server     string
+	apiKey     string
 	httpClient *http.Client
 }
 
@@ -38,8 +38,8 @@ type WorkloadStatus struct {
 }
 
 type LogOptions struct {
-	TailLines int  `json:"tail_lines"`
-	Follow    bool `json:"follow"`
+	TailLines int    `json:"tail_lines"`
+	Follow    bool   `json:"follow"`
 	Since     string `json:"since"`
 }
 
@@ -235,6 +235,119 @@ func (c *Client) DeleteNamespace(ctx context.Context, name string) error {
 	}
 
 	return nil
+}
+
+type DiffResult struct {
+	WorkloadName string                 `json:"workload_name"`
+	Changes      []DiffChange           `json:"changes"`
+	Summary      map[string]interface{} `json:"summary"`
+}
+
+type DiffChange struct {
+	Field      string      `json:"field"`
+	OldValue   interface{} `json:"old_value"`
+	NewValue   interface{} `json:"new_value"`
+	ChangeType string      `json:"change_type"` // added, modified, removed
+}
+
+type DryRunPreview struct {
+	Actions []DryRunAction         `json:"actions"`
+	Summary map[string]interface{} `json:"summary"`
+}
+
+type DryRunAction struct {
+	Type        string                 `json:"type"`
+	Resource    string                 `json:"resource"`
+	Namespace   string                 `json:"namespace"`
+	Description string                 `json:"description"`
+	Details     map[string]interface{} `json:"details"`
+}
+
+type AIRequest struct {
+	Prompt    string `json:"prompt"`
+	Namespace string `json:"namespace"`
+	Workload  string `json:"workload,omitempty"`
+}
+
+type AIResponse struct {
+	Response        string  `json:"response"`
+	SuggestedAction string  `json:"suggested_action,omitempty"`
+	CodeSnippet     string  `json:"code_snippet,omitempty"`
+	Confidence      float64 `json:"confidence"`
+}
+
+func (c *Client) GetDiff(ctx context.Context, name, namespace string, proposedSpec *WorkloadSpec) (*DiffResult, error) {
+	body, err := json.Marshal(proposedSpec)
+	if err != nil {
+		return nil, err
+	}
+
+	path := fmt.Sprintf("/api/v1/workloads/%s/diff?namespace=%s", name, namespace)
+	resp, err := c.doRequest(ctx, "POST", path, bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.parseError(resp)
+	}
+
+	var diff DiffResult
+	if err := json.NewDecoder(resp.Body).Decode(&diff); err != nil {
+		return nil, err
+	}
+
+	return &diff, nil
+}
+
+func (c *Client) GetDryRunPreview(ctx context.Context, namespace, manifest string) (*DryRunPreview, error) {
+	body := []byte(fmt.Sprintf(`{"namespace": "%s", "manifest": %q}`, namespace, manifest))
+	resp, err := c.doRequest(ctx, "POST", "/api/v1/dryrun/preview", bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.parseError(resp)
+	}
+
+	var preview DryRunPreview
+	if err := json.NewDecoder(resp.Body).Decode(&preview); err != nil {
+		return nil, err
+	}
+
+	return &preview, nil
+}
+
+func (c *Client) AskAI(ctx context.Context, namespace, prompt string) (*AIResponse, error) {
+	req := &AIRequest{
+		Prompt:    prompt,
+		Namespace: namespace,
+	}
+
+	body, err := json.Marshal(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := c.doRequest(ctx, "POST", "/api/v1/ai/ask", bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.parseError(resp)
+	}
+
+	var aiResp AIResponse
+	if err := json.NewDecoder(resp.Body).Decode(&aiResp); err != nil {
+		return nil, err
+	}
+
+	return &aiResp, nil
 }
 
 func (c *Client) parseError(resp *http.Response) error {

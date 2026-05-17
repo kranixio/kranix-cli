@@ -201,6 +201,50 @@ kranix context use <name>            # switch active context
 kranix context set-default <name>    # set default context
 ```
 
+### `kranix dashboard`
+
+```
+kranix dashboard
+
+Flags:
+  --namespace    Filter by namespace
+  --refresh      Refresh interval in seconds (default: 5)
+
+Launch a k9s-style TUI dashboard for real-time cluster state monitoring.
+Navigate with arrow keys or vim-style (j/k), press enter for details, q to quit.
+```
+
+### `kranix diff`
+
+```
+kranix diff [workload-name] [flags]
+
+Flags:
+  --namespace    Target namespace
+  --output       Output format: table, json, yaml (default: table)
+  --file         Diff from manifest file
+  --image        New container image
+  --replicas     New replica count
+  --env          Environment variables (KEY=VALUE)
+
+Show exactly what would change before applying. Uses dry-run mode to preview changes.
+```
+
+### `kranix ai`
+
+```
+kranix ai [flags]
+
+Flags:
+  --namespace    Target namespace
+  --context      Provide context for one-shot analysis
+  --mode         Mode: chat, analyze, fix (default: chat)
+
+Launch an inline AI assistant that analyzes your context, diagnoses issues,
+and suggests fixes directly in the terminal. Supports interactive chat mode
+or one-shot analysis with --context.
+```
+
 ---
 
 ## Shell completion
