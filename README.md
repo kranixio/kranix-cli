@@ -245,6 +245,53 @@ and suggests fixes directly in the terminal. Supports interactive chat mode
 or one-shot analysis with --context.
 ```
 
+### `kranix cost`
+
+```
+kranix cost [workload-name] [flags]
+
+Flags:
+  --namespace    Filter by namespace
+  --output       Output format: table, json, yaml (default: table)
+  --duration     Time duration (e.g., 1h, 1d, 7d, 30d) (default: 7d)
+
+Show estimated spend breakdown per workload, including compute, storage,
+and network costs. View cost for a specific workload or get a summary
+for all workloads in a namespace.
+```
+
+### `kranix template`
+
+```
+kranix template [flags]
+
+Flags:
+  --list         List available templates
+  --name         Template name to apply
+  --output       Output file path (default: stdout)
+  --var          Template variables (KEY=VALUE)
+
+Bootstrap a new workload from community templates. List available templates
+or apply a template with custom variables. Supports popular templates like
+nginx, nodejs, postgres, and more.
+```
+
+### `kranix offline`
+
+```
+kranix offline [flags]
+
+Flags:
+  --enable       Enable offline mode
+  --disable      Disable offline mode
+  --status       Show offline mode status
+  --sync         Sync offline cache with API
+
+Manage offline/air-gap mode for basic operations when kranix-api is not
+reachable. Caches workloads locally for read-only access. Enable offline mode
+and sync cache to work without API connectivity.
+```
+
 ---
 
 ## Shell completion

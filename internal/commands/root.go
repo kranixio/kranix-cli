@@ -32,4 +32,7 @@ func init() {
 	rootCmd.AddCommand(dashboardCmd)
 	rootCmd.AddCommand(diffCmd)
 	rootCmd.AddCommand(aiCmd)
+	rootCmd.AddCommand(costCmd)
+	rootCmd.AddCommand(templateCmd)
+	rootCmd.AddCommand(offlineCmd)
 }

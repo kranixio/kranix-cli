@@ -31,10 +31,11 @@ type WorkloadSpec struct {
 }
 
 type WorkloadStatus struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	State string `json:"state"`
-	Image string `json:"image"`
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	State     string `json:"state"`
+	Image     string `json:"image"`
+	Namespace string `json:"namespace"`
 }
 
 type LogOptions struct {
@@ -276,6 +277,51 @@ type AIResponse struct {
 	Confidence      float64 `json:"confidence"`
 }
 
+type WorkloadCost struct {
+	WorkloadName string          `json:"workload_name"`
+	Namespace    string          `json:"namespace"`
+	Duration     string          `json:"duration"`
+	TotalCost    float64         `json:"total_cost"`
+	ComputeCost  float64         `json:"compute_cost"`
+	StorageCost  float64         `json:"storage_cost"`
+	NetworkCost  float64         `json:"network_cost"`
+	Breakdown    []CostBreakdown `json:"breakdown"`
+}
+
+type CostBreakdown struct {
+	Resource string  `json:"resource"`
+	Cost     float64 `json:"cost"`
+	Usage    string  `json:"usage"`
+}
+
+type CostSummary struct {
+	Namespace        string         `json:"namespace"`
+	Duration         string         `json:"duration"`
+	TotalCost        float64        `json:"total_cost"`
+	WorkloadCount    int            `json:"workload_count"`
+	AverageCost      float64        `json:"average_cost"`
+	TopCostWorkloads []WorkloadCost `json:"top_cost_workloads"`
+}
+
+type Template struct {
+	Name        string        `json:"name"`
+	Description string        `json:"description"`
+	Category    string        `json:"category"`
+	Variables   []TemplateVar `json:"variables"`
+}
+
+type TemplateVar struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+	Default     string `json:"default"`
+	Required    bool   `json:"required"`
+}
+
+type TemplateContent struct {
+	Name    string `json:"name"`
+	Content string `json:"content"`
+}
+
 func (c *Client) GetDiff(ctx context.Context, name, namespace string, proposedSpec *WorkloadSpec) (*DiffResult, error) {
 	body, err := json.Marshal(proposedSpec)
 	if err != nil {
@@ -348,6 +394,88 @@ func (c *Client) AskAI(ctx context.Context, namespace, prompt string) (*AIRespon
 	}
 
 	return &aiResp, nil
+}
+
+func (c *Client) GetWorkloadCost(ctx context.Context, workloadName, namespace, duration string) (*WorkloadCost, error) {
+	path := fmt.Sprintf("/api/v1/workloads/%s/cost?namespace=%s&duration=%s", workloadName, namespace, duration)
+	resp, err := c.doRequest(ctx, "GET", path, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.parseError(resp)
+	}
+
+	var cost WorkloadCost
+	if err := json.NewDecoder(resp.Body).Decode(&cost); err != nil {
+		return nil, err
+	}
+
+	return &cost, nil
+}
+
+func (c *Client) GetCostSummary(ctx context.Context, namespace, duration string) (*CostSummary, error) {
+	path := fmt.Sprintf("/api/v1/cost/summary?namespace=%s&duration=%s", namespace, duration)
+	resp, err := c.doRequest(ctx, "GET", path, nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.parseError(resp)
+	}
+
+	var summary CostSummary
+	if err := json.NewDecoder(resp.Body).Decode(&summary); err != nil {
+		return nil, err
+	}
+
+	return &summary, nil
+}
+
+func (c *Client) ListTemplates(ctx context.Context) ([]*Template, error) {
+	resp, err := c.doRequest(ctx, "GET", "/api/v1/templates", nil)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.parseError(resp)
+	}
+
+	var templates []*Template
+	if err := json.NewDecoder(resp.Body).Decode(&templates); err != nil {
+		return nil, err
+	}
+
+	return templates, nil
+}
+
+func (c *Client) GetTemplate(ctx context.Context, templateName string, vars map[string]string) (*TemplateContent, error) {
+	body, _ := json.Marshal(map[string]interface{}{
+		"name": templateName,
+		"vars": vars,
+	})
+	resp, err := c.doRequest(ctx, "POST", "/api/v1/templates/get", bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, c.parseError(resp)
+	}
+
+	var content TemplateContent
+	if err := json.NewDecoder(resp.Body).Decode(&content); err != nil {
+		return nil, err
+	}
+
+	return &content, nil
 }
 
 func (c *Client) parseError(resp *http.Response) error {
