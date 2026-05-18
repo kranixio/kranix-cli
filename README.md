@@ -453,7 +453,7 @@ kranix-cli/
 | Repo | Relationship |
 |---|---|
 | `kranix-api` | All commands translate into kranix-api HTTP requests |
-| `kranix-packages` | Imports shared API types and error codes |
+| `kranix-packages` | Imports shared API types, the Go SDK, and optional `kranix-mock-api` for offline tests |
 
 ---
 
