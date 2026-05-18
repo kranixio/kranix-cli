@@ -1,8 +1,13 @@
 package commands
 
 import (
+	"os"
+
+	clilib "github.com/kranix-io/kranix-packages/cmd/cli-lib"
 	"github.com/spf13/cobra"
 )
+
+var globalFlags clilib.GlobalFlags
 
 var rootCmd = &cobra.Command{
 	Use:   "kranix",
@@ -11,6 +16,12 @@ var rootCmd = &cobra.Command{
 It wraps kranix-api in a fast, developer-friendly shell experience with commands
 for deploying workloads, streaming logs, inspecting cluster state, analyzing failures,
 and managing namespaces.`,
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		if err := clilib.ValidateFlags(&globalFlags); err != nil {
+			clilib.PrintError(err)
+			os.Exit(1)
+		}
+	},
 }
 
 func Execute() error {
@@ -18,6 +29,9 @@ func Execute() error {
 }
 
 func init() {
+	// Add global flags using the CLI helper library
+	clilib.AddGlobalFlags(rootCmd, &globalFlags)
+
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(deployCmd)
 	rootCmd.AddCommand(statusCmd)
