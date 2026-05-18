@@ -18,16 +18,24 @@ type Client struct {
 	httpClient *http.Client
 }
 
+type CronScheduleSpec struct {
+	Schedule          string `json:"schedule,omitempty"`
+	Suspended         bool   `json:"suspended,omitempty"`
+	TimeZone          string `json:"timeZone,omitempty"`
+	ConcurrencyPolicy string `json:"concurrencyPolicy,omitempty"`
+}
+
 type WorkloadSpec struct {
-	Name      string            `json:"name"`
-	Image     string            `json:"image"`
-	Namespace string            `json:"namespace"`
-	Replicas  int               `json:"replicas"`
-	Env       map[string]string `json:"env"`
-	Port      int               `json:"port"`
-	CPU       string            `json:"cpu"`
-	Memory    string            `json:"memory"`
-	Command   string            `json:"command"`
+	Name         string              `json:"name"`
+	Image        string              `json:"image"`
+	Namespace    string              `json:"namespace"`
+	Replicas     int                 `json:"replicas"`
+	Env          map[string]string   `json:"env"`
+	Port         int                 `json:"port"`
+	CPU          string              `json:"cpu"`
+	Memory       string              `json:"memory"`
+	Command      string              `json:"command"`
+	CronSchedule *CronScheduleSpec   `json:"cronSchedule,omitempty"`
 }
 
 type WorkloadStatus struct {

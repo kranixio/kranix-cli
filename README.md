@@ -27,7 +27,7 @@ Developer (terminal)
 
 `kranix-cli` is a pure API client. All business logic lives in `kranix-api` and `kranix-core`. The CLI is responsible only for UX: input parsing, output formatting, and streaming.
 
----
+**Workload JSON:** Deploy payloads can include **`cronSchedule`**, **`scheduling`** (**`workloadPriority`**, **`preemptionEnabled`**, **`spot`**, **`priorityClassName`**, …), and **`crossNamespaceTraffic`** using the same field names as **`kranix-packages/types`** — see **`internal/client/client.go`**.
 
 ## Installation
 
