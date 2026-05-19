@@ -25,6 +25,12 @@ type CronScheduleSpec struct {
 	ConcurrencyPolicy string `json:"concurrencyPolicy,omitempty"`
 }
 
+type WorkloadTags struct {
+	Team        string `json:"team,omitempty"`
+	Environment string `json:"environment,omitempty"`
+	CostCenter  string `json:"costCenter,omitempty"`
+}
+
 type WorkloadSpec struct {
 	Name         string              `json:"name"`
 	Image        string              `json:"image"`
@@ -36,6 +42,7 @@ type WorkloadSpec struct {
 	Memory       string              `json:"memory"`
 	Command      string              `json:"command"`
 	CronSchedule *CronScheduleSpec   `json:"cronSchedule,omitempty"`
+	Tags         *WorkloadTags       `json:"tags,omitempty"`
 }
 
 type WorkloadStatus struct {
