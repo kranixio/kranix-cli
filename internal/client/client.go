@@ -45,6 +45,17 @@ type WarmStandbySpec struct {
 	AutoPromote bool  `json:"autoPromote,omitempty"`
 }
 
+type SecretRef struct {
+	Name      string `json:"name,omitempty"`
+	Namespace string `json:"namespace,omitempty"`
+	EnvKey    string `json:"envKey,omitempty"`
+}
+
+type SecretRotationSpec struct {
+	Enabled    bool        `json:"enabled,omitempty"`
+	SecretRefs []SecretRef `json:"secretRefs,omitempty"`
+}
+
 type WorkloadSpec struct {
 	Name         string              `json:"name"`
 	Image        string              `json:"image"`
@@ -58,7 +69,8 @@ type WorkloadSpec struct {
 	CronSchedule   *CronScheduleSpec   `json:"cronSchedule,omitempty"`
 	Tags           *WorkloadTags       `json:"tags,omitempty"`
 	CircuitBreaker *CircuitBreakerSpec `json:"circuitBreaker,omitempty"`
-	WarmStandby    *WarmStandbySpec    `json:"warmStandby,omitempty"`
+	WarmStandby      *WarmStandbySpec      `json:"warmStandby,omitempty"`
+	SecretRotation   *SecretRotationSpec   `json:"secretRotation,omitempty"`
 }
 
 type WorkloadStatus struct {
