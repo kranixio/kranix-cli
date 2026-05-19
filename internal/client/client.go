@@ -31,6 +31,20 @@ type WorkloadTags struct {
 	CostCenter  string `json:"costCenter,omitempty"`
 }
 
+type CircuitBreakerSpec struct {
+	Enabled             bool  `json:"enabled,omitempty"`
+	FailureThreshold    int32 `json:"failureThreshold,omitempty"`
+	SuccessThreshold    int32 `json:"successThreshold,omitempty"`
+	OpenDurationSeconds int32 `json:"openDurationSeconds,omitempty"`
+	HalfOpenMaxRequests int32 `json:"halfOpenMaxRequests,omitempty"`
+}
+
+type WarmStandbySpec struct {
+	Enabled     bool  `json:"enabled,omitempty"`
+	Replicas    int32 `json:"replicas,omitempty"`
+	AutoPromote bool  `json:"autoPromote,omitempty"`
+}
+
 type WorkloadSpec struct {
 	Name         string              `json:"name"`
 	Image        string              `json:"image"`
@@ -41,8 +55,10 @@ type WorkloadSpec struct {
 	CPU          string              `json:"cpu"`
 	Memory       string              `json:"memory"`
 	Command      string              `json:"command"`
-	CronSchedule *CronScheduleSpec   `json:"cronSchedule,omitempty"`
-	Tags         *WorkloadTags       `json:"tags,omitempty"`
+	CronSchedule   *CronScheduleSpec   `json:"cronSchedule,omitempty"`
+	Tags           *WorkloadTags       `json:"tags,omitempty"`
+	CircuitBreaker *CircuitBreakerSpec `json:"circuitBreaker,omitempty"`
+	WarmStandby    *WarmStandbySpec    `json:"warmStandby,omitempty"`
 }
 
 type WorkloadStatus struct {
